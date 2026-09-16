@@ -8,6 +8,8 @@ def export_dataframe_to_html(
     path: Path,
     title: str = "Modelens Report",
     chart=None,
+    second_df: pd.DataFrame | None = None,
+    second_title: str | None = None,
 ):
     path = Path(path)
 
@@ -16,25 +18,90 @@ def export_dataframe_to_html(
         exist_ok=True,
     )
 
-    table_html = df.to_html(
+    # -----------------------------------
+    # Main Table
+    # -----------------------------------
+
+    html_df = df.copy()
+
+    for column in html_df.columns:
+        html_df[column] = html_df[column].apply(
+            lambda value: (
+                value.replace("\n", "<br>")
+                if isinstance(value, str)
+                else value
+            )
+        )
+
+    table_html = html_df.to_html(
         index=True,
         border=0,
         classes="data-table",
+        escape=False,
     )
+
+    # -----------------------------------
+    # Second Table
+    # -----------------------------------
+
+    second_table_html = ""
+
+    if second_df is not None:
+        html_second_df = second_df.copy()
+
+        for column in html_second_df.columns:
+            html_second_df[column] = html_second_df[column].apply(
+                lambda value: (
+                    value.replace("\n", "<br>")
+                    if isinstance(value, str)
+                    else value
+                )
+            )
+
+        second_table = html_second_df.to_html(
+            index=False,
+            border=0,
+            classes="data-table",
+            escape=False,
+        )
+
+        second_table_html = f"""
+        <div class="card second-card">
+
+            <h2>
+                {second_title or "Additional Information"}
+            </h2>
+
+            {second_table}
+
+        </div>
+        """
+
+    # -----------------------------------
+    # Chart
+    # -----------------------------------
 
     chart_html = ""
 
     if chart:
         chart_html = f"""
         <div class="card chart-card">
-            <h2>Test R² Comparison</h2>
+
+            <h2>
+                Fit / Predict Time Comparison
+            </h2>
 
             <img
                 src="data:image/png;base64,{chart}"
-                alt="Test R² Comparison"
+                alt="Fit / Predict Time Comparison"
             >
+
         </div>
         """
+
+    # -----------------------------------
+    # HTML
+    # -----------------------------------
 
     html = f"""
 <!DOCTYPE html>
@@ -108,6 +175,17 @@ def export_dataframe_to_html(
             overflow-x: auto;
         }}
 
+        .second-card {{
+            margin-top: 24px;
+        }}
+
+        .second-card h2 {{
+            margin-top: 0;
+            margin-bottom: 20px;
+
+            font-size: 20px;
+        }}
+
         .data-table {{
             width: 100%;
 
@@ -153,6 +231,8 @@ def export_dataframe_to_html(
 
             border-bottom:
                 1px solid #e5e7eb;
+
+            line-height: 1.8;
         }}
 
         .data-table tbody tr:hover {{
@@ -219,6 +299,8 @@ def export_dataframe_to_html(
         <div class="card">
             {table_html}
         </div>
+
+        {second_table_html}
 
         {chart_html}
 

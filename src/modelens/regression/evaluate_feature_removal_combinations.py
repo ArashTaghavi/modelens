@@ -16,7 +16,7 @@ def evaluate_feature_removal_combinations(
     random_state: int,
     model,
     export_html,
-    html_path,
+    file_name,
 ):
     cv = KFold(
         n_splits=5,
@@ -93,7 +93,7 @@ def evaluate_feature_removal_combinations(
     if export_html:
         _html_report(
             df=result,
-            html_path=html_path,
+            html_path=f"html_reports/evaluate_feature_removal_combinations/{file_name}.html",
         )
 
     return result

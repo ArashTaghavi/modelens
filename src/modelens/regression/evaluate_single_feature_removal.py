@@ -12,7 +12,7 @@ def evaluate_single_feature_removal(
     target: str,
     random_state: int,
     export_html,
-    html_path,
+    file_name,
     model=None,
     features=None,
 ):
@@ -103,11 +103,12 @@ def evaluate_single_feature_removal(
     if export_html:
         _html_report(
             df=result,
-            html_path=html_path,
+            html_path=f"html_reports/evaluate_single_feature_removal/{file_name}.html",
         )
 
-    return result
-
+    return (
+            f"✓ Report generated successfully: html_reports/evaluate_single_feature_removal/{file_name}.html"
+        )
 
 def _html_report(
     df: pd.DataFrame,

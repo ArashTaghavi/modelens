@@ -16,9 +16,6 @@ from .permutation_importance import (
     calculate_permutation_importance as get_permutation_importance,
 )
 from .residual_analysis import residual_analysis as get_residual_analysis
-from .select_model_candidates import (
-    select_model_candidates as get_select_model_candidates,
-)
 from .tune_model import tune_model as get_tune_model
 from .vif import vif as get_vif
 from .vif_with_linear_regression import (
@@ -60,7 +57,7 @@ class RegressionAnalyzer:
         model=None,
         features=None,
         export_html=False,
-        html_path="html_reports/evaluate_single_feature_removal.html",
+        file_name=None,
         random_state=42,
     ):
         return get_evaluate_single_feature_removal(
@@ -70,7 +67,7 @@ class RegressionAnalyzer:
             target=self.target,
             random_state=random_state,
             export_html=export_html,
-            html_path=html_path,
+            file_name=file_name,
         )
 
     def evaluate_feature_removal_combinations(
@@ -79,7 +76,7 @@ class RegressionAnalyzer:
         features,
         model=None,
         export_html=False,
-        html_path="html_reports/evaluate_feature_removal_combinations.html",
+        file_name=None,
         random_state=42,
     ):
         return get_evaluate_feature_removal_combinations(
@@ -90,7 +87,7 @@ class RegressionAnalyzer:
             target=self.target,
             random_state=random_state,
             export_html=export_html,
-            html_path=html_path,
+            file_name=file_name,
         )
 
     def compare_models(
@@ -98,7 +95,7 @@ class RegressionAnalyzer:
         features,
         models,
         export_html=False,
-        html_path="html_reports/compare_models.html",
+        file_name=None,
         random_state=42,
     ):
         return get_compare_models(
@@ -107,7 +104,7 @@ class RegressionAnalyzer:
             target=self.target,
             models=models,
             export_html=export_html,
-            html_path=html_path,
+            file_name=file_name,
             random_state=random_state,
         )
 
@@ -183,7 +180,7 @@ class RegressionAnalyzer:
         scoring=None,
         cv=5,
         export_html=False,
-        html_path="html_reports/tune_model.html",
+        file_name=None,
         random_state=42,
     ):
         return get_tune_model(
@@ -195,7 +192,7 @@ class RegressionAnalyzer:
             scoring=scoring,
             cv=cv,
             export_html=export_html,
-            html_path=html_path,
+            file_name=file_name,
             random_state=random_state,
         )
 
@@ -215,20 +212,4 @@ class RegressionAnalyzer:
             cv=cv,
             random_state=random_state,
             train_sizes=train_sizes,
-        )
-
-    def select_model_candidates(
-        self,
-        results,
-        max_performance_loss: float = 0.05,
-        performance_column: str = "Test R2",
-        fit_time_column: str = "Fit Time (s)",
-        feature_count_column=None,
-    ):
-        return get_select_model_candidates(
-            results=results,
-            max_performance_loss=max_performance_loss,
-            performance_column=performance_column,
-            fit_time_column=fit_time_column,
-            feature_count_column=feature_count_column,
         )
