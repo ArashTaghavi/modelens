@@ -1,5 +1,7 @@
 import pandas as pd
 
+from modelens.utils.html_reporter import export_dataframe_to_html
+
 from .check_overfitting import check_overfitting as get_check_overfitting
 from .compare_models import compare_models as get_compare_models
 from .compare_regularization import compare_regularization as get_compare_regularization
@@ -213,3 +215,75 @@ class RegressionAnalyzer:
             random_state=random_state,
             train_sizes=train_sizes,
         )
+
+
+    def compare_feature_sets(
+        self,
+        model,
+        feature_sets: dict,
+        cv=5,
+        export_html=False,
+        file_name="feature_sets_comparison",
+        random_state=42,
+    ):
+        from pathlib import Path
+
+        import pandas as pd
+        from sklearn.base import clone
+        from sklearn.model_selection import KFold, cross_validate
+
+        kfold = KFold(
+            n_splits=cv,
+            shuffle=True,
+            random_state=random_state,
+        )
+
+        results = {}
+
+        for name, features in feature_sets.items():
+
+            X = self.df[features]
+            y = self.df[self.target]
+
+            scores = cross_validate(
+                clone(model),
+                X,
+                y,
+                cv=kfold,
+                scoring={
+                    "r2": "r2",
+                    "rmse": "neg_root_mean_squared_error",
+                },
+                return_train_score=True,
+            )
+
+            train_r2_mean = scores["train_r2"].mean()
+            test_r2_mean = scores["test_r2"].mean()
+
+            train_rmse_mean = -scores["train_rmse"].mean()
+            test_rmse_mean = -scores["test_rmse"].mean()
+
+            results[name] = {
+                "Features": len(features),
+                "Test R2": (f"{test_r2_mean:.4f} ± " f"{scores['test_r2'].std():.4f}"),
+                "Test RMSE": (
+                    f"{test_rmse_mean:.4f} ± " f"{scores['test_rmse'].std():.4f}"
+                ),
+                "R2 Gap": train_r2_mean - test_r2_mean,
+                "RMSE Gap": test_rmse_mean - train_rmse_mean,
+            }
+
+        result = pd.DataFrame(results).T
+
+        result.index.name = "Feature Set"
+
+        if export_html:
+            html_path = f"html_reports/compare_feature_sets/" f"{file_name}.html"
+
+            export_dataframe_to_html(
+                df=result,
+                path=Path(html_path),
+                title="Feature Sets Comparison",
+            )
+
+        return f"✓ Report generated successfully: {html_path}"

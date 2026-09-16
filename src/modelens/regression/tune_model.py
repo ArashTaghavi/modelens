@@ -299,10 +299,7 @@ def tune_model(
         else:
             predict_speed = -(predict_time / best_predict_time)
 
-        speed_values.append(
-            f"Predict: {predict_speed:.2f}x\n"
-            f"Fit: {fit_speed:.2f}x"
-        )
+        speed_values.append(f"Predict: {predict_speed:.2f}x\n" f"Fit: {fit_speed:.2f}x")
 
     result["Speed vs Best"] = speed_values
 
@@ -351,11 +348,7 @@ def tune_model(
             html_path=html_path,
         )
 
-        return (
-            f"✓ Report generated successfully: {html_path}"
-        )
-
-    return result, best_params
+    return "✓ html_reports/tune_models"
 
 
 def _html_report(

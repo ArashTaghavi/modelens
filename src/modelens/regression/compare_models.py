@@ -260,7 +260,7 @@ def compare_models(
             chart=chart,
         )
 
-    return f"✓ Report generated successfully: html_reports/compare_models/{file_name}.html"
+    return "✓ Report generated successfully: html_reports/compare_models"
 
 def _plot(df: pd.DataFrame):
     plot_data = (
