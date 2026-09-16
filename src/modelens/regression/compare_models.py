@@ -69,6 +69,7 @@ def compare_models(
             ),
             # Internal values
             "_Test R2 Mean": test_r2_mean,
+            "_Test RMSE Mean": test_rmse_mean,
             "_Fit Time Mean": fit_time_mean,
         }
 
@@ -85,11 +86,66 @@ def compare_models(
         ],
     )
 
+    # -----------------------------------
+    # Best model = first row
+    # -----------------------------------
+
+    best_test_r2 = float(result.iloc[0]["_Test R2 Mean"])
+
+    best_test_rmse = float(result.iloc[0]["_Test RMSE Mean"])
+
+    best_fit_time = float(result.iloc[0]["_Fit Time Mean"])
+
+    # -----------------------------------
+    # Test R2 relative loss
+    # -----------------------------------
+
+    r2_values = result["_Test R2 Mean"].astype(float)
+
+    r2_loss = best_test_r2 - r2_values
+
+    r2_loss_percent = r2_loss / best_test_r2 * 100
+
+    result["Test R2 Loss"] = [
+        f"{percent:.2f} % ({loss:.4f})"
+        for percent, loss in zip(
+            r2_loss_percent,
+            r2_loss,
+        )
+    ]
+
+    # -----------------------------------
+    # Test RMSE relative loss
+    # -----------------------------------
+
+    rmse_values = result["_Test RMSE Mean"].astype(float)
+
+    rmse_loss = rmse_values - best_test_rmse
+
+    rmse_loss_percent = rmse_loss / best_test_rmse * 100
+
+    result["Test RMSE Loss"] = [
+        f"{percent:.2f} % ({loss:.4f})"
+        for percent, loss in zip(
+            rmse_loss_percent,
+            rmse_loss,
+        )
+    ]
+
+    # -----------------------------------
+    # Fit time speedup
+    # -----------------------------------
+
+    result["Speedup vs Best"] = (
+        best_fit_time / result["_Fit Time Mean"].astype(float)
+    ).map(lambda value: f"{value:.2f}x")
+
     chart = _plot(result)
 
     result = result.drop(
         columns=[
             "_Test R2 Mean",
+            "_Test RMSE Mean",
             "_Fit Time Mean",
         ]
     )

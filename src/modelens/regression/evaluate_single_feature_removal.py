@@ -74,16 +74,20 @@ def evaluate_single_feature_removal(
         rmse_gap = test_rmse_mean - train_rmse_mean
 
         result[name] = {
-            "Train R2": (f"{train_r2_mean:.4f} " f"± {scores['train_r2'].std():.4f}"),
-            "Test R2": (f"{test_r2_mean:.4f} " f"± {scores['test_r2'].std():.4f}"),
-            "R2 Gap": r2_gap,
-            "Train RMSE": (
+            "Train R2 (Remaining Features)": (
+                f"{train_r2_mean:.4f} " f"± {scores['train_r2'].std():.4f}"
+            ),
+            "Test R2 (Remaining Features)": (
+                f"{test_r2_mean:.4f} " f"± {scores['test_r2'].std():.4f}"
+            ),
+            "Train-Test R2 Gap": r2_gap,
+            "Train RMSE (Remaining Features)": (
                 f"{train_rmse_mean:.4f} " f"± {scores['train_rmse'].std():.4f}"
             ),
-            "Test RMSE": (
+            "Test RMSE (Remaining Features)": (
                 f"{test_rmse_mean:.4f} " f"± {scores['test_rmse'].std():.4f}"
             ),
-            "RMSE Gap": rmse_gap,
+            "Test-Train RMSE Gap": rmse_gap,
             "_Test R2 Mean": test_r2_mean,
         }
 

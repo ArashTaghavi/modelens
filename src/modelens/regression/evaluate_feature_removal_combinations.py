@@ -88,7 +88,7 @@ def evaluate_feature_removal_combinations(
             }
         )
 
-    result = pd.DataFrame(results).sort_values(by="Train R2", ascending=False)
+    result = pd.DataFrame(results).sort_values(by="Test R2", ascending=False)
 
     if export_html:
         _html_report(
