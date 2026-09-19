@@ -17,6 +17,7 @@ from .evaluate_single_feature_removal import (
     evaluate_single_feature_removal as get_evaluate_single_feature_removal,
 )
 from .evaluate_thresholds import evaluate_thresholds as get_evaluate_thresholds
+from .feature_extraction import feature_extraction as get_feature_extraction
 from .learning_curve import plot_learning_curve
 from .permutation_importance import (
     calculate_permutation_importance as get_permutation_importance,
@@ -243,4 +244,16 @@ class ClassificationAnalyzer(BaseAnalyzer):
             group=group,
             test_size=test_size,
             random_state=random_state,
+        )
+
+    def feature_extraction(
+        self,
+        features=None,
+        n_components=None,
+    ):
+        return get_feature_extraction(
+            df=self.df,
+            target=self.target,
+            features=features,
+            n_components=n_components,
         )

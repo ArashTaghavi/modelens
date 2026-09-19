@@ -9,6 +9,8 @@ from .evaluate_feature_removal_combinations import (
 from .evaluate_single_feature_removal import (
     evaluate_single_feature_removal as get_evaluate_single_feature_removal,
 )
+from .feature_extraction import feature_extraction as get_feature_extraction
+from .feature_selection import feature_selection as get_feature_selection
 from .learning_curve import plot_learning_curve
 from .permutation_importance import (
     calculate_permutation_importance as get_permutation_importance,
@@ -191,4 +193,34 @@ class RegressionAnalyzer(BaseAnalyzer):
             export_html=export_html,
             file_name=file_name,
             random_state=random_state,
+        )
+
+    def feature_selection(
+        self,
+        model=None,
+        features=None,
+        scoring="r2",
+        cv=5,
+        random_state=42,
+    ):
+        return get_feature_selection(
+            df=self.df,
+            target=self.target,
+            model=model,
+            features=features,
+            scoring=scoring,
+            cv=cv,
+            random_state=random_state,
+        )
+
+    def feature_extraction(
+        self,
+        features=None,
+        variance_threshold=0.95,
+    ):
+        return get_feature_extraction(
+            df=self.df,
+            target=self.target,
+            features=features,
+            variance_threshold=variance_threshold,
         )
