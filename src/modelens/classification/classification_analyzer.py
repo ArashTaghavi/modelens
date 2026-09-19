@@ -1,23 +1,37 @@
+import pandas as pd
+
 from modelens.base import BaseAnalyzer
 
+from .analyze_prediction_group import (
+    analyze_prediction_group as get_analyze_prediction_group,
+)
+from .compare_class_weight import (
+    compare_class_weight as get_compare_class_weight,
+)
 from .compare_feature_sets import compare_feature_sets as get_compare_feature_sets
 from .compare_models import compare_models as get_compare_models
-from .compare_regularization import compare_regularization as get_compare_regularization
 from .evaluate_feature_removal_combinations import (
     evaluate_feature_removal_combinations as get_evaluate_feature_removal_combinations,
 )
 from .evaluate_single_feature_removal import (
     evaluate_single_feature_removal as get_evaluate_single_feature_removal,
 )
+from .evaluate_thresholds import evaluate_thresholds as get_evaluate_thresholds
 from .learning_curve import plot_learning_curve
 from .permutation_importance import (
     calculate_permutation_importance as get_permutation_importance,
 )
-from .residual_analysis import residual_analysis as get_residual_analysis
-from .tune_model import tune_model as get_tune_model
+from .prediction_error_analysis import (
+    prediction_error_analysis as get_prediction_error_analysis,
+)
+from .tune_model import (
+    tune_model as get_tune_model,
+)
 
 
-class RegressionAnalyzer(BaseAnalyzer):
+class ClassificationAnalyzer(BaseAnalyzer):
+    def __init__(self, df: pd.DataFrame, target: str):
+        self._set_data(df, target)
 
     def evaluate_single_feature_removal(
         self,
@@ -75,6 +89,27 @@ class RegressionAnalyzer(BaseAnalyzer):
             random_state=random_state,
         )
 
+    def compare_feature_sets(
+        self,
+        model,
+        feature_sets: dict,
+        cv=5,
+        export_html=False,
+        file_name="feature_sets_comparison",
+        random_state=42,
+    ):
+
+        return get_compare_feature_sets(
+            df=self.df,
+            target=self.target,
+            model=model,
+            feature_sets=feature_sets,
+            cv=cv,
+            export_html=export_html,
+            file_name=file_name,
+            random_state=random_state,
+        )
+
     def permutation_importance(
         self,
         random_state=42,
@@ -92,7 +127,7 @@ class RegressionAnalyzer(BaseAnalyzer):
             html_path=html_path,
         )
 
-    def residual_analysis(
+    def prediction_error_analysis(
         self,
         features=None,
         model=None,
@@ -102,7 +137,7 @@ class RegressionAnalyzer(BaseAnalyzer):
         html_path="html_reports/residual_analysis.html",
         residual_threshold=4,
     ):
-        return get_residual_analysis(
+        return get_prediction_error_analysis(
             df=self.df,
             features=features,
             target=self.target,
@@ -111,23 +146,7 @@ class RegressionAnalyzer(BaseAnalyzer):
             random_state=random_state,
             export_html=export_html,
             html_path=html_path,
-            residual_threshold=residual_threshold,
-        )
-
-    def compare_regularization(
-        self,
-        features=None,
-        alphas=None,
-        l1_ratio=0.5,
-        random_state=42,
-    ):
-        return get_compare_regularization(
-            df=self.df,
-            target=self.target,
-            features=features,
-            alphas=alphas,
-            l1_ratio=l1_ratio,
-            random_state=random_state,
+            threshold=residual_threshold,
         )
 
     def tune_model(
@@ -172,23 +191,56 @@ class RegressionAnalyzer(BaseAnalyzer):
             train_sizes=train_sizes,
         )
 
-    def compare_feature_sets(
+    def evaluate_thresholds(
         self,
         model,
-        feature_sets: dict,
-        cv=5,
-        export_html=False,
-        file_name="feature_sets_comparison",
+        features,
+        thresholds=None,
+        test_size=0.2,
         random_state=42,
     ):
-
-        return get_compare_feature_sets(
+        return get_evaluate_thresholds(
             df=self.df,
-            target=self.target,
             model=model,
-            feature_sets=feature_sets,
+            features=features,
+            target=self.target,
+            thresholds=thresholds,
+            test_size=test_size,
+            random_state=random_state,
+        )
+
+    def compare_class_weight(
+        self,
+        model,
+        features,
+        cv=5,
+        random_state=42,
+    ):
+        return get_compare_class_weight(
+            df=self.df,
+            model=model,
+            features=features,
+            target=self.target,
             cv=cv,
-            export_html=export_html,
-            file_name=file_name,
+            random_state=random_state,
+        )
+
+    def analyze_prediction_group(
+        self,
+        model,
+        features,
+        threshold=0.5,
+        group="FN",
+        test_size=0.2,
+        random_state=42,
+    ):
+        return get_analyze_prediction_group(
+            df=self.df,
+            model=model,
+            features=features,
+            target=self.target,
+            threshold=threshold,
+            group=group,
+            test_size=test_size,
             random_state=random_state,
         )

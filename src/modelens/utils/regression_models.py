@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from catboost import CatBoostRegressor
 from lightgbm import LGBMRegressor
 from sklearn.ensemble import (

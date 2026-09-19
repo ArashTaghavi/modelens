@@ -1,6 +1,5 @@
 import pandas as pd
-
-from sklearn.linear_model import LinearRegression, Ridge, Lasso, ElasticNet
+from sklearn.linear_model import ElasticNet, Lasso, LinearRegression, Ridge
 from sklearn.model_selection import KFold, cross_validate
 
 
