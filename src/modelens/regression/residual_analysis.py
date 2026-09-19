@@ -67,8 +67,6 @@ def residual_analysis(
             chart=chart,
         )
 
-    return result, high_error_samples
-
 
 def _plot(
     df: pd.DataFrame,

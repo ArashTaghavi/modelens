@@ -136,11 +136,6 @@ def calculate_permutation_importance(
             chart=chart,
         )
 
-    return (
-        importance_r2_output,
-        importance_rmse_output,
-    )
-
 
 def _plot(
     importance_r2: pd.DataFrame,
